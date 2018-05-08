@@ -1,17 +1,6 @@
 # Notes from NLP w/ Python (NLTK Book)
 
-import nltk
-nltk.download()
-
-from nltk.book import *
-
-
 Text
-- .concordance()
-- .similar()
-- .common_contexts()
-- .dispersion_plot()
-- .generate()
 - t[n]
   - t[n1:n2:n3]
 - .index("")

@@ -325,6 +325,54 @@ inaugural.fileids()
 
 ### Corpora in Other Languages
 
+* nltk.corpus.cess_esp
+* nltk.corpus.floresta
+* nltk.corpus.indian
+* nltk.corpus.udhr
 
+```python
+len(nltk.corpus.udhr.fileids())  # >>> 310
+nltk.corpus.udhr.fileids()[:10]
+```
 
+# >>> ['Abkhaz-Cyrillic+Abkh',
+# >>>  'Abkhaz-UTF8',
+# >>>  'Achehnese-Latin1',
+# >>>  'Achuar-Shiwiar-Latin1',
+# >>>  'Adja-UTF8',
+# >>>  'Afaan_Oromo_Oromiffa-Latin1',
+# >>>  'Afrikaans-Latin1',
+# >>>  'Aguaruna-Latin1',
+# >>>  'Akuapem_Twi-UTF8',
+# >>>  'Albanian_Shqip-Latin1']
 
+### Text Corpus Structure
+
+Types:
+
+* isolated (e.g. gutenberg)
+* categorized (e.g. brown)
+* overlapping (e.g. reuters)
+* temporal (e.g. inaugural)
+
+### Loading Your Own Corpus
+
+* `PlaintextCorpusReader` handles corpora that consist of a set of unannotated text files
+* `BracketParseCorpusReader` handles corpora that consist of files containing parenthesis-delineated parse trees
+   - e.g. Penn Treebank
+
+* using `PlaintextCorpusReader`
+* - specify corpus root
+* - specify fileids: either specific, or pattern
+
+```python
+root = "/foo/bar/bat"
+fileids = '.*\.txt'
+
+my_corpus = PlaintextCorpusReader(root, fileids)
+my_corpus.fileids()
+```
+
+# >>> ['file1.txt', 'file2.txt']
+
+# RESUME @ Conditional Frequency Distributions

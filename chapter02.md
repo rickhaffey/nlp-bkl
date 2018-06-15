@@ -494,30 +494,224 @@ list(bi_grams)[20:40]
 Generate a conditional frequency distribution using bigrams
 
 ```python
-words = [w.lower() for w in gutenberg.words('shakespeare-hamlet.txt')]
+words = [w.lower() for w in gutenberg.words('melville-moby_dick.txt')]
 bigrams = nltk.bigrams(words)
 
 cfd = nltk.ConditionalFreqDist(bigrams)
 
-cfd['sir'].most_common()
+cfd['whale'].most_common()[:20]
 ```
 
 ```
-[(',', 33),
- (':', 5),
- ('.', 4),
- ('ham', 4),
- ('hor', 2),
- ('?', 2),
- (';', 2),
- ('my', 1),
- ('does', 1),
- ('take', 1),
- ('guild', 1),
- ('an', 1),
- ('i', 1),
- ('though', 1),
- ('now', 1),
- ('king', 1),
- ('laer', 1)]
+[(',', 215),
+ ("'", 125),
+ ('-', 123),
+ ('.', 79),
+ (';', 68),
+ ('is', 45),
+ ('was', 24),
+ ('in', 20),
+ ('and', 17),
+ ('fishery', 17)]
+```
+
+Generate random text from the cfd of a text's bigrams and a seed word
+
+```python
+def generate_model(cfdist, word, num=15):
+    for i in range(num):
+        print(word, end=' ')
+        word = cfdist[word].max()
+
+
+generate_model(cfd, 'fishery')
+```
+
+```
+fishery , and the whale , and the whale , and the whale , and
+```
+
+Note the repetition.
+
+## Lexical Resources
+
+### Wordlist Corpora
+
+Find a list of all the words in a document that _aren't_ in the wordlist corpus
+
+```python
+wordlist = set(w.lower() for w in nltk.corpus.words.words())
+moby_vocab = set(w.lower() for w in words if w.isalpha())  # from moby dick
+diff = moby_vocab.difference(wordlist)
+
+print(sorted(diff)[:30])
+```
+
+```
+['abated', 'abating', 'abednego', 'abhorred', 'abided', 'abjectus',
+ 'ablutions', 'abominated', 'aboriginalness', 'abortions', 'abounded', 'abstained',
+ 'accelerating', 'accidents', 'accommodated', 'accompanied', 'accompanies', 'accompaniments',
+ 'accompanying', 'accomplishing', 'accountants', 'accounted', 'accounts', 'accumulated',
+ 'accumulating', 'acerbities', 'ached', 'achieved', 'achilles', 'acknowledges']
+```
+
+**Stopwords**
+
+```python
+from nltk.corpus import stopwords
+sw = stopwords.words('english')
+print(sw[:30])
+```
+
+```
+['i', 'me', 'my', 'myself', 'we', 'our',
+ 'ours', 'ourselves', 'you', "you're", "you've", "you'll",
+ "you'd", 'your', 'yours', 'yourself', 'yourselves', 'he',
+ 'him', 'his', 'himself', 'she', "she's", 'her',
+ 'hers', 'herself', 'it', "it's", 'its', 'itself']
+```
+
+Calculate stopword content
+
+```python
+def stopword_fraction(text):
+  stopwords = nltk.corpus.stopwords.words('english')
+  text_sw = [w for w in text if w.lower() in stopwords]
+  return len(text_sw) / len(text)
+  
+
+text = gutenberg.words('melville-moby_dick.txt')
+print(stopword_fraction(text))
+```
+
+```
+0.4137045230600531
+```
+
+
+Puzzle:
+
+```
+ E  G  I
+ V  R  V
+ O  N  L
+```
+
+```python
+puzzle_letters = 'egivrvonl'
+puzzle_freq = nltk.FreqDist(puzzle_letters)
+obligatory = 'r'
+
+wordlist = nltk.corpus.words.words()
+[w for w in wordlist if len(w) >= 6
+                     and obligatory in w
+                     and nltk.FreqDist(w) <= puzzle_freq]
+```
+
+```
+['glover',
+ 'gorlin',
+ 'govern',
+ 'grovel',
+ 'ignore',
+ 'involver',
+ 'lienor',
+ 'linger',
+ 'longer',
+ 'lovering',
+ 'noiler',
+ 'overling',
+ 'region',
+ 'renvoi',
+ 'revolving',
+ 'ringle',
+ 'roving',
+ 'violer',
+ 'virole']
+```
+
+### Names Corpora
+
+* contains 8,000 first names categorized by gender
+
+```python
+names = nltk.corpus.names
+names.fileids()
+```
+
+```
+['female.txt', 'male.txt']
+```
+
+```pyton
+male_names = names.words('male.txt')
+male_names[:10]
+```
+
+```
+['Aamir',
+ 'Aaron',
+ 'Abbey',
+ 'Abbie',
+ 'Abbot',
+ 'Abbott',
+ 'Abby',
+ 'Abdel',
+ 'Abdul',
+ 'Abdulkarim']
+```
+
+Compare the most frequent letters in male and female names:
+
+```python
+male_letters = [c for word in names.words('male.txt') for c in list(word.lower())]
+female_letters = [c for word in names.words('female.txt') for c in list(word.lower())]
+
+mfd = nltk.FreqDist(male_letters)
+ffd = nltk.FreqDist(female_letters)
+```
+
+```python
+mfd.most_common()[:10]
+```
+
+```
+[('e', 1958),
+ ('a', 1683),
+ ('r', 1631),
+ ('n', 1302),
+ ('i', 1248),
+ ('l', 1135),
+ ('o', 1129),
+ ('t', 857),
+ ('s', 804),
+ ('d', 757)]
+```
+
+## A Pronouncing Dictionary
+
+* CMU Pronouncing Dictionary
+  * provides a list of phonetic codes for each word
+  * 
+* see http://en.wikipedia.org/wiki/Arpabet
+* each entry consists of a word and a list of _phones_ describing its pronunciation
+  
+```python
+entries = nltk.corpus.cmudict.entries()
+entries[40010:40020]
+```
+
+```
+[('exquisite', ['EH1', 'K', 'S', 'K', 'W', 'AH0', 'Z', 'AH0', 'T']),
+ ('exquisitely',
+  ['EH2', 'K', 'S', 'K', 'W', 'IH1', 'Z', 'IH0', 'T', 'L', 'IY0']),
+ ('extant', ['EH1', 'K', 'S', 'T', 'AH0', 'N', 'T']),
+ ('extel', ['EH1', 'K', 'S', 'T', 'EH2', 'L']),
+ ('extend', ['IH0', 'K', 'S', 'T', 'EH1', 'N', 'D']),
+ ('extendable',
+  ['EH2', 'K', 'S', 'T', 'EH1', 'N', 'D', 'AH0', 'B', 'AH0', 'L']),
+ ('extended', ['IH0', 'K', 'S', 'T', 'EH1', 'N', 'D', 'AH0', 'D']),
+ ('extended', ['IH0', 'K', 'S', 'T', 'EH1', 'N', 'D', 'IH0', 'D']),
+ ('extender', ['EH1', 'K', 'S', 'T', 'EH2', 'N', 'D', 'ER0']),
+ ('extenders', ['EH1', 'K', 'S', 'T', 'EH2', 'N', 'D', 'ER0', 'Z'])]
 ```

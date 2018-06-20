@@ -715,3 +715,98 @@ entries[40010:40020]
  ('extender', ['EH1', 'K', 'S', 'T', 'EH2', 'N', 'D', 'ER0']),
  ('extenders', ['EH1', 'K', 'S', 'T', 'EH2', 'N', 'D', 'ER0', 'Z'])]
 ```
+
+## A Rhyme Generator
+
+```python
+syllable = ['R', 'AY1', 'M']
+[word for word, pron in entries if pron[-3:] == syllable]
+```
+
+```
+['anticrime', 'anticrime', 'crime', 'grime', 'prime', 'rhyme']
+```
+
+
+## Extract the Emphasis Pattern of Entries
+
+```python
+def stress(pron):
+  return [char for phone in pron for char in phone if char.isdigit()]
+[(word, stress(pron)) for word, pron in entries[1020:1030]]
+```
+
+```
+[('addle', ['1', '0']),
+ ('addled', ['1', '0']),
+ ('addleman', ['1', '0', '0']),
+ ('address', ['1', '2']),
+ ('address', ['0', '1']),
+ ('addressable', ['0', '1', '0', '0']),
+ ('addressed', ['0', '1']),
+ ('addressee', ['2', '0', '1']),
+ ('addresses', ['1', '1', '0']),
+ ('addresses', ['0', '1', '0'])]
+```
+
+## CMU Dictionary
+
+```python
+prondict = nltk.corpus.cmudict.dict()
+prondict['literature']
+```
+
+```
+[['L', 'IH1', 'T', 'ER0', 'AH0', 'CH', 'ER0']]
+```
+
+
+## Comparative Wordlists
+
+* **comparative wordlists**
+* **Swadesh wordlists**: lists of ~200 common words in several languages
+
+```python
+from nltk.corpus import swadesh
+swadesh.fileids()
+```
+
+```
+['be', 'bg', 'bs', 'ca', 'cs', 'cu', 'de', 'en', 'es',
+'fr', 'hr', 'it', 'la', 'mk', 'nl', 'pl', 'pt', 'ro',
+'ru', 'sk', 'sl', 'sr', 'sw', 'uk']
+```
+
+```python
+swadesh.words('es')[:10]
+```
+
+```
+['yo',
+ 'tú, usted',
+ 'él',
+ 'nosotros',
+ 'vosotros, ustedes',
+ 'ellos, ellas',
+ 'este',
+ 'ese, aquel',
+ 'aquí, acá',
+ 'ahí, allí, allá']
+```
+
+```python
+swadesh.entries(['en', 'es'])[:10]
+```
+
+```
+[('I', 'yo'),
+ ('you (singular), thou', 'tú, usted'),
+ ('he', 'él'),
+ ('we', 'nosotros'),
+ ('you (plural)', 'vosotros, ustedes'),
+ ('they', 'ellos, ellas'),
+ ('this', 'este'),
+ ('that', 'ese, aquel'),
+ ('here', 'aquí, acá'),
+ ('there', 'ahí, allí, allá')]
+```
